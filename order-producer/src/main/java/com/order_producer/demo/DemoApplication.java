@@ -21,13 +21,29 @@ public class DemoApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Order order = Order.newBuilder()
+		Order order1 = Order.newBuilder()
 				.setOrderId("1001")
 				.setProduct("Item1")
 				.setPrice(199.99f)
 				.build();
 
-		orderProducerService.sendOrder(order);
+		Order order2 = Order.newBuilder()
+				.setOrderId("1002")
+				.setProduct("Item2")
+				.setPrice(20f)
+				.build();
+
+		Order order3 = Order.newBuilder()
+				.setOrderId("1003")
+				.setProduct("Item3")
+				.setPrice(30f)
+				.build();
+
+		orderProducerService.sendOrder(order1);
+		orderProducerService.sendOrder(order2);
+		orderProducerService.sendOrder(order3);
+
+		System.out.println("Test orders sent!");
 	}
 
 }

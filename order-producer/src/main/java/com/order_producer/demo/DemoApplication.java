@@ -36,14 +36,21 @@ public class DemoApplication implements CommandLineRunner {
 		Order order3 = Order.newBuilder()
 				.setOrderId("1003")
 				.setProduct("Item3")
+				.setPrice(50f)
+				.build();
+
+		Order order4 = Order.newBuilder()
+				.setOrderId("1004")
+				.setProduct("Item4")
 				.setPrice(30f)
 				.build();
 
 		orderProducerService.sendOrder(order1);
 		orderProducerService.sendOrder(order2);
 		orderProducerService.sendOrder(order3);
+		orderProducerService.sendOrder(order4);
 
-		System.out.println("Test orders sent!");
+		System.out.println("#### Test orders sent!");
 	}
 
 }

@@ -14,7 +14,7 @@ public class OrderService {
         double average = sum / count;
 
         System.out.println(
-                "Received order " + order.getOrderId() +
+                "#### Received order " + order.getOrderId() +
                 " | product = " + order.getProduct() +
                 " | price = " + order.getPrice() +
                 " | running average = " + average

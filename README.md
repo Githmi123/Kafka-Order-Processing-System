@@ -61,12 +61,17 @@ A **Dead Letter Queue** is a Kafka topic where messages that **cannot be process
 git clone https://github.com/Githmi123/Kafka-Order-Processing-System.git
 ```
 
-3. Start all services
+2. Go in to the directory
+```
+cd Kafka-Order-Processing-System
+```
+
+4. Start all services
 ```
 docker compose up --build -d
 ```
 
-5. View consumer logs
+4. View consumer logs
 ```
 docker logs order-consumer
 ```

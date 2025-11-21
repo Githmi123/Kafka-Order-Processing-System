@@ -63,7 +63,7 @@ git clone https://github.com/Githmi123/Kafka-Order-Processing-System.git
 
 3. Start all services
 ```
-docker-compose up --build -d
+docker compose up --build -d
 ```
 
 5. View consumer logs
@@ -118,5 +118,11 @@ When product == "FAIL" -> Throws a RuntimeException intentionally
 
 After 3 total attempts, if it still fails, message is sent to DLQ.
 After each failure, Spring Kafka waits 2 seconds before retrying.
+
+## Cleanup
+To stop the system:
+```
+docker compose down
+```
 
 

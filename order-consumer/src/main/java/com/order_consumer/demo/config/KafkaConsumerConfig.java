@@ -1,5 +1,6 @@
 package com.order_consumer.demo.config;
 
+import com.order_producer.demo.avro.Order;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -14,6 +15,8 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
+import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +36,7 @@ public class KafkaConsumerConfig {
     private String autoOffsetReset;
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+    public ConcurrentKafkaListenerContainerFactory<String, Order> kafkaListenerContainerFactory() {
         Map<String, Object> props = new HashMap<>();
 
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -46,16 +49,23 @@ public class KafkaConsumerConfig {
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
 
-        DefaultKafkaConsumerFactory<String, Object> consumerFactory = new DefaultKafkaConsumerFactory<>(props);
-        ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        DefaultKafkaConsumerFactory<String, Order> consumerFactory = new DefaultKafkaConsumerFactory<>(props);
+        ConcurrentKafkaListenerContainerFactory<String, Order> factory = new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(consumerFactory);
+        factory.setCommonErrorHandler(
+                new DefaultErrorHandler(
+                        recoverer(avroKafkaTemplate()),  // your DLQ recoverer
+                        new FixedBackOff(2000L, 2)      // backoff and retry attempts
+                )
+        );
+
 
         return factory;
     }
 
     @Bean
-    public KafkaTemplate<String, Object> avroKafkaTemplate() {
+    public KafkaTemplate<String, Order> avroKafkaTemplate() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put("schema.registry.url", schemaRegistryUrl);
@@ -66,7 +76,7 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
-    public DeadLetterPublishingRecoverer recoverer(KafkaTemplate<String, Object> avroKafkaTemplate) {
+    public DeadLetterPublishingRecoverer recoverer(KafkaTemplate<String, Order> avroKafkaTemplate) {
         return new DeadLetterPublishingRecoverer(avroKafkaTemplate);
     }
 }

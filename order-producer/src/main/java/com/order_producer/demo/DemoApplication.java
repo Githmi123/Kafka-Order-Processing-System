@@ -33,9 +33,9 @@ public class DemoApplication implements CommandLineRunner {
 				.setPrice(20f)
 				.build();
 
-		Order order3 = Order.newBuilder()
-				.setOrderId("1003")
-				.setProduct("Item3")
+		Order failOrder = Order.newBuilder()
+				.setOrderId("999")
+				.setProduct("FAIL")
 				.setPrice(50f)
 				.build();
 
@@ -47,7 +47,7 @@ public class DemoApplication implements CommandLineRunner {
 
 		orderProducerService.sendOrder(order1);
 		orderProducerService.sendOrder(order2);
-		orderProducerService.sendOrder(order3);
+		orderProducerService.sendOrder(failOrder);
 		orderProducerService.sendOrder(order4);
 
 		System.out.println("#### Test orders sent!");
